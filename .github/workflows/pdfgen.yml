@@ -18,8 +18,9 @@ jobs:
 
     - name: Find and convert DOCX to PDF
       run: |
-        for file in $(find . -name '*.docx'); do
-          pandoc "$file" -o "${file%.docx}.pdf"
+        find . -name '*.docx' -print0 | while IFS= read -r -d '' file; do
+          output="${file%.docx}.pdf"
+          pandoc "$file" -f docx -t pdf -o "$output"
         done
 
     - name: Upload PDFs
