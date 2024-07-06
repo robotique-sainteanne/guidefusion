@@ -1,0 +1,29 @@
+name: Convert DOCX to PDF
+
+on:
+  push:
+    paths:
+      - '**/*.docx'  # Trigger only when .docx files are pushed
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Pandoc
+      run: sudo apt-get install -y pandoc texlive
+
+    - name: Find and convert DOCX to PDF
+      run: |
+        for file in $(find . -name '*.docx'); do
+          pandoc "$file" -o "${file%.docx}.pdf"
+        done
+
+    - name: Upload PDFs
+      uses: actions/upload-artifact@v3
+      with:
+        name: pdf-files
+        path: '**/*.pdf'
